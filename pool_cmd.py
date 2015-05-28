@@ -1,33 +1,33 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-import pool_core
+import pool_wb
 import argparse
 import sys
 
 # CURRENT_ITEM_GETTER_MAP = {
-#'base16-shell': pool_core.current_base16_shell_scheme,
-#'zsh_prompt_theme': pool_core.current_zsh_prompt_theme,
+#'base16-shell': pool_wb.current_base16_shell_scheme,
+#'zsh_prompt_theme': pool_wb.current_zsh_prompt_theme,
 #}
 
 ACTION_MAP = {
-    'like': pool_core.pool.like,
-    'ban': pool_core.pool.ban,
-    'free': pool_core.pool.free,
-    'list': pool_core.pool.list,
-    'info': pool_core.pool.info,
-    'pick': pool_core.pool.pick,
-    'current': pool_core.pool.current,
-    'white_list': pool_core.pool.white_list,
-    'free_list': pool_core.pool.free_list,
-    'black_list': pool_core.pool.black_list,
+    'like': pool_wb.pool.like,
+    'ban': pool_wb.pool.ban,
+    'free': pool_wb.pool.free,
+    'list': pool_wb.pool.list,
+    'info': pool_wb.pool.info,
+    'pick': pool_wb.pool.pick,
+    'current': pool_wb.pool.current,
+    'white_list': pool_wb.pool.white_list,
+    'free_list': pool_wb.pool.free_list,
+    'black_list': pool_wb.pool.black_list,
 }
 
 POOL_FACTORY_MAP = {
-    'b': pool_core.pool.base16_shell_theme_pool,
-    'base16': pool_core.pool.base16_shell_theme_pool,
-    'z': pool_core.pool.zsh_prompt_theme_pool,
-    'zsh_prompt': pool_core.pool.zsh_prompt_theme_pool,
+    'b': pool_wb.pool.base16_shell_theme_pool,
+    'base16': pool_wb.pool.base16_shell_theme_pool,
+    'z': pool_wb.pool.zsh_prompt_theme_pool,
+    'zsh_prompt': pool_wb.pool.zsh_prompt_theme_pool,
 }
 
 # command interface
@@ -83,7 +83,7 @@ if ns.action == 'reset':
         'zsh_prompt': 'zsh_prompt',
     }
 
-    pool_core.pool.reset(_map[ns.what])
+    pool_wb.pool.reset(_map[ns.what])
 
     sys.exit()
 
