@@ -7,6 +7,7 @@ import json
 import os
 import textwrap
 import glob
+import re
 import time
 
 import pickers
@@ -334,26 +335,13 @@ class pool(object):
         \x1b[33m{}\x1b[0m
 
         {}
-
-        \x1b[32m{}\x1b[0m
-
-        {}
-
-        \x1b[31m{}\x1b[0m
-
-        {}
         '''
 
         template = textwrap.dedent(template)
 
-        tw = textwrap.TextWrapper()
-        tw.width = line_width
-
-        i = 0
-
         def columnize(cells, width=70):
             if len(cells) == 0:
-                return ''
+                return 'empty set ?'
 
             max_cell_width = max(map(len, cells))
             cells_per_line = (width + 1) / max_cell_width
@@ -374,8 +362,22 @@ class pool(object):
             return result_lines
 
         full_list_text = columnize(self._full_set)
-        white_list_text = columnize(self._white_set)
-        black_list_text = columnize(self._black_set)
+
+        tw = textwrap.TextWrapper()
+        tw.width = line_width
+        full_list_tex = tw.fill(full_list_text)
+
+        white_item_sgr = '\x1b[1;4;35m'
+        white_item_repl = white_item_sgr + '\g<0>\x1b[0m'
+        for item in self._white_set:
+            full_list_text = re.sub(item.strip(), white_item_repl, full_list_text)
+
+        black_item_sgr = '\x1b[2m'
+        black_item_repl = black_item_sgr + '\g<0>\x1b[0m'
+        for item in self._black_set:
+            full_list_text = re.sub(item.strip(), black_item_repl, full_list_text)
+
+        list_head = ' \x1b[0mnormal | {}white\x1b[0m | {}black\x1b[0m'.format(white_item_sgr, black_item_sgr).rjust(line_width + 25, '-')
 
         text = template.format(
             '== {} =='.format(self._name.upper()).center(line_width + 15),
@@ -383,12 +385,8 @@ class pool(object):
             self._white_right,
             self._free_right,
             self._black_right,
-            ' full list '.rjust(line_width + 15, '-'),
-            tw.fill(full_list_text),
-            ' whitel list '.rjust(line_width + 15, '-'),
-            tw.fill(white_list_text),
-            ' black list '.rjust(line_width + 15, '-'),
-            tw.fill(black_list_text)
+            list_head,
+            full_list_text,
         )
 
         return text
