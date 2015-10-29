@@ -370,14 +370,25 @@ class pool(object):
         white_item_sgr = '\x1b[1;4;35m'
         white_item_repl = white_item_sgr + '\g<0>\x1b[0m'
         for item in self._white_set:
-            full_list_text = re.sub(item.strip(), white_item_repl, full_list_text)
+            full_list_text = re.sub(
+                item.strip(),
+                white_item_repl,
+                full_list_text)
 
         black_item_sgr = '\x1b[2m'
         black_item_repl = black_item_sgr + '\g<0>\x1b[0m'
         for item in self._black_set:
-            full_list_text = re.sub(item.strip(), black_item_repl, full_list_text)
+            full_list_text = re.sub(
+                item.strip(),
+                black_item_repl,
+                full_list_text)
 
-        list_head = ' \x1b[0mnormal | {}white\x1b[0m | {}black\x1b[0m'.format(white_item_sgr, black_item_sgr).rjust(line_width + 25, '-')
+        list_head = ' \x1b[0mnormal | {}white\x1b[0m | {}black\x1b[0m'.format(
+            white_item_sgr,
+            black_item_sgr).rjust(
+            line_width +
+            25,
+            '-')
 
         text = template.format(
             '== {} =='.format(self._name.upper()).center(line_width + 15),
