@@ -46,7 +46,7 @@ cmd.add_argument(
 
 cmd.add_argument(
     'action',
-    choices=ACTION_MAP.keys() + ['reset'],
+    choices=list(ACTION_MAP.keys()) + ['reset'],
     nargs='?',
     default='info',
     help='action to apply onto the item')
