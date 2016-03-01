@@ -16,8 +16,8 @@ import pickers
 class pool(object):
 
     data_files = {
-        'zsh_prompt': os.path.expanduser('~/.mdx_zsh_prompt_theme_pool'),
-        'base16': os.path.expanduser('~/.mdx_base16_shell_theme_pool'),
+        'zsh_prompt': os.path.expanduser('~/.mdx_zsh_prompt_theme_pool.json'),
+        'base16': os.path.expanduser('~/.mdx_base16_shell_theme_pool.json'),
     }
 
     @classmethod
@@ -155,7 +155,10 @@ class pool(object):
 
     @property
     def _free_set(self):
-        """set of items from full_set, that is neither in white set nor black set"""
+        """
+        set of items from full_set, that is neither in white set
+        nor black set
+        """
         self.check_sets
         return self._full_set - self._white_set - self._black_set
 
@@ -172,7 +175,7 @@ class pool(object):
             items = (self._current_item, )
 
         for item in items:
-            if not item in self._full_set:
+            if item not in self._full_set:
                 print("* item name '{}' not exists *".format(item))
             else:
                 self._black_set.add(item)
@@ -191,7 +194,7 @@ class pool(object):
             items = (self._current_item, )
 
         for item in items:
-            if not item in self._full_set:
+            if item not in self._full_set:
                 print("* item name '{}' not exists *".format(item))
 
             self._black_set.discard(item)
@@ -212,7 +215,7 @@ class pool(object):
             items = (self._current_item, )
 
         for item in items:
-            if not item in self._full_set:
+            if item not in self._full_set:
                 print("* item name '{}' not exists *".format(item))
             else:
                 self._white_set.add(item)
@@ -276,17 +279,17 @@ class pool(object):
 
     def json_dump(self):
         """
-        convert self object as json compatible list, and write to the data file.
+        convert self object as json compatible list, and write to
+        the data file.
         """
         with open(self._data_file_path, mode='w') as json_file:
-            to_dump = [
-                pool.current_data_model_version,
-                list(self._white_set),
-                list(self._black_set),
-                self._white_right,
-                self._free_right,
-            ]
-            json.dump(to_dump, json_file)
+            to_dump = {
+                'white list': list(self._white_set),
+                'black list': list(self._black_set),
+                'white item weight': self._white_right,
+                'black item weight': self._free_right,
+            }
+            json.dump(to_dump, json_file, sort_keys=True, indent=2)
 
     def json_load(self):
 
@@ -296,20 +299,18 @@ class pool(object):
             with open(self._data_file_path, mode='r') as json_file:
                 json_obj = json.load(json_file)
 
-                # check version
-                if pool.current_data_model_version == json_obj[0]:
-                    self._white_set = set(json_obj[1])
-                    self._black_set = set(json_obj[2])
+                # update model object
+                self._white_set = set(json_obj['white list'])
+                self._black_set = set(json_obj['black list'])
 
-                    self.set_rights(json_obj[3], json_obj[4])
+                self.set_rights(
+                    json_obj['white item weight'],
+                    json_obj['black item weight'])
 
-                    loaded = True
-                else:
-                    print(
-                        "* invalid data file version detected, reset with old"
-                        " file renamed...*")
+                loaded = True
 
         if not loaded:
+            print('* loading pool zsh prompt data file failed, reset *')
             self.reset_instance()
 
     def reset_instance(self):
@@ -447,30 +448,3 @@ class pool(object):
                     data_file,
                     get_current_item,
                     get_available_themes)
-
-    #@staticmethod
-    # def vim_color_scheme_pool():
-        #'''create and return a pool to manage vim color schemes'''
-
-        # def available_schemes():
-        # schemes = []
-
-        # schemes under vim-config/neobundle/*/colors
-        # root_dir = os.path.expandvars(
-        #'$MDX_REPOS_ROOT/vim-config/neobundle/')
-        # pattern = os.path.join(root_dir, '*', 'colors', '*.vim')
-        # items = glob.glob(pattern)
-        # items = [os.path.basename(p)[:-4] for p in items]
-        # schemes += items
-
-        # schemes under vim-config/colors
-        # root_dir = os.path.expandvars('$MDX_REPOS_ROOT/vim-config/colors/')
-        # pattern = os.path.join(root_dir, '*.vim')
-        # items = glob.glob(pattern)
-        # items = [os.path.basename(p)[:-4] for p in items]
-        # schemes += items
-
-        # return frozenset(schemes)
-
-        # file = os.path.expanduser('~/.mdx_vim_color_scheme_pool')
-        # return pool('vim color scheme pool', file, available_schemes)
